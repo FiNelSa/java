@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Odevler/Hello World/Hello World.iml" filepath="$PROJECT_DIR$/Odevler/Hello World/Hello World.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Odevler/Islemler/Islemler.iml" filepath="$PROJECT_DIR$/Odevler/Islemler/Islemler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Odevler/String Ödev/String Ödev.iml" filepath="$PROJECT_DIR$/Odevler/String Ödev/String Ödev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/java.iml" filepath="$PROJECT_DIR$/.idea/java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stockmarket/stockmarket.iml" filepath="$PROJECT_DIR$/stockmarket/stockmarket.iml" />
+    </modules>
+  </component>
+</project>
