@@ -48,20 +48,20 @@ public class Main {
 
             double urStonks = 0;//Değer değişiminden sonraki fark
 
-            while (true) {//Değer değişiminin sürekli olması ve ne zamana kadar devam etmesini bildirmek amacıyla döngüye alıyoruz
+            while (urStonks<10000) {//Değer değişiminin sürekli olması ve ne zamana kadar devam etmesini bildirmek amacıyla döngüye alıyoruz
 
                 sugar = prices.nextDouble(sugar * 0, sugar * 3);//Önceki değerinin kaç ile çarpılacağı
                 salt = prices.nextDouble(salt * 0, salt * 3);
                 bread = prices.nextDouble(bread * 0, bread * 3);
                 uvLight = prices.nextDouble(uvLight * 0, uvLight * 3);
                 
-                urStonks = (sugar + salt + bread + uvLight - totalValue);//Yeni toplam değer ile eskisinin farkı
+                urStonks = (sugar*sugarPieces + salt*saltPieces + bread*breadPieces + uvLight*uvPieces - totalValue);//Yeni toplam değer ile eskisinin farkı
                 System.out.println("Your things' total value after delay is " + urStonks);//kullanıcıya bildirimi
 
-                System.out.println("Value of sugar = " + sugar);//Değerlerinin kullanıcıya bildirilmesi
-                System.out.println("Value of salt = " + salt);
-                System.out.println("Value of bread = " + bread);
-                System.out.println("Value of UV Lights = " + uvLight);
+                System.out.println("Value of sugar = " + sugar + "\n Total pieces of your Sugar = " + sugarPieces);//Değerlerinin kullanıcıya bildirilmesi
+                System.out.println("Value of salt = " + salt + "\n Total pieces of your Salt = " + saltPieces);
+                System.out.println("Value of bread = " + bread + "\n Total pieces of your Bread = " + breadPieces);
+                System.out.println("Value of UV Lights = " + uvLight + "\n Total pieces of your UV Lights = " + uvPieces);
 
                 System.out.println("If you want to buy or sell enter one, else enter zero.");//Bir şey alıp ya da satmak istediğini soruyoruz
                 int cont = piece.nextInt();
@@ -69,23 +69,23 @@ public class Main {
                     System.out.println("How much Sugar do you want to buy or sell?");
                     int newSugar = piece.nextInt();//Ne kadar alıp sattığını öğreniyoruz
                     sugarPieces = sugarPieces+newSugar;//Aldığı ya da sattığı adeti ana miktara ekliyoruz
-                    totalValue = totalValue + (-newSugar*sugar);//Parası artıyor ya da azalıyor
+                    totalValue = totalValue + (newSugar*sugar);//Parası artıyor ya da azalıyor
 
                     System.out.println("How much Salt do you want to buy or sell?");//Aynı
                     int newSalt = piece.nextInt();
                     saltPieces = saltPieces+ newSalt;
-                    totalValue = totalValue + (-newSalt*salt);
+                    totalValue = totalValue + (newSalt*salt);
 
-                    System.out.println("How much Sugar do you want to buy or sell?");
+                    System.out.println("How much Bread do you want to buy or sell?");
                     int newBread = piece.nextInt();
                     breadPieces = breadPieces+newBread;
-                    totalValue = totalValue + (-newBread*bread);
+                    totalValue = totalValue + (newBread*bread);
 
-                    System.out.println("How much Sugar do you want to buy or sell?");
+                    System.out.println("How much UV Lights do you want to buy or sell?");
                     int newUv = piece.nextInt();
                     uvPieces = uvPieces+newUv;
-                    totalValue = totalValue + (-newUv*uvLight);
-                }else{}
+                    totalValue = totalValue + (newUv*uvLight);
+                }
             }
     }
 }
