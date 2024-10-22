@@ -6,17 +6,17 @@ public class Main {
         Random prices = new Random();
         Scanner piece = new Scanner(System.in);
 
-
             double sugar = prices.nextDouble(0 , 10);
             double salt = prices.nextDouble(0 , 10);
             double bread = prices.nextDouble(0 , 10);
             double uvLight = prices.nextDouble(0 , 10);
             // Sugar, Salt, Bread ve UV Light'ın değerinin belirlenmesi
 
-            System.out.println("The price of sugar = " + sugar);//Değerlerinin kullanıcıya bildirilmesi
+            System.out.println("The price of sugar = " + sugar);
             System.out.println("The price of salt = " + salt);
             System.out.println("The price of bread = " + bread);
             System.out.println("The price of UV Lights = " + uvLight);
+            //Değerlerinin kullanıcıya bildirilmesi
 
 
             System.out.println("How much Sugar do you have?");
@@ -48,7 +48,7 @@ public class Main {
 
             double urStonks = 0;//Değer değişiminden sonraki fark
 
-            while (urStonks<10000) {//Değer değişiminin sürekli olması ve ne zamana kadar devam etmesini bildirmek amacıyla döngüye alıyoruz
+            while (true) {//Değer değişiminin sürekli olması ve ne zamana kadar devam etmesini bildirmek amacıyla döngüye alıyoruz
 
                 sugar = prices.nextDouble(sugar * 0, sugar * 3);//Önceki değerinin kaç ile çarpılacağı
                 salt = prices.nextDouble(salt * 0, salt * 3);
