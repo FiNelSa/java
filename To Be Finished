@@ -29,7 +29,22 @@ public class Main {
         int Gains =0;
         for (int i = 0;i <= 5; i++){
             System.out.println("Şeker Fiyatı: "+sugarPrice);
-            sugarPrice *= rand.nextDouble(0.1,1.2);
+            sugarPrice *= rand.nextDouble(0.2,1.2);
+            System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
+            sugarAmount += scanner.nextInt();
+            Gains = sugarAmount*sugarPrice;
+            System.out.println(Gains);
+
+        }
+        return Gains;
+    }
+    public static int FastRise(int sugarPrice,int sugarAmount){
+        Scanner scanner = new Scanner(System.in);
+        Random rand = new Random();
+        int Gains =0;
+        for (int i =0; i<2;i++){
+            System.out.println("Şeker Fiyatı: "+sugarPrice);
+            sugarPrice *= rand.nextDouble(0.8,5);
             System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
             sugarAmount += scanner.nextInt();
             Gains = sugarAmount*sugarPrice;
@@ -39,12 +54,44 @@ public class Main {
         return Gains;
     }
 
+    public static int FastFall(int sugarPrice,int sugarAmount){
+        Scanner scanner = new Scanner(System.in);
+        Random rand = new Random();
+        int Gains =0;
+        for (int i =0; i<2;i++){
+            System.out.println("Şeker Fiyatı: "+sugarPrice);
+            sugarPrice *= rand.nextDouble(0.01,1.2);
+            System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
+            sugarAmount += scanner.nextInt();
+            Gains = sugarAmount*sugarPrice;
+            System.out.println(Gains);
+
+        }
+        
+        return Gains;
+    }
     public static void main(String[] args) {
         Random rand = new Random();
         Scanner scanner = new Scanner(System.in);
         int sugarPrice = 10;
-        int sugarAmount=0;
+        int sugarAmount= scanner.nextInt();
         int Gains = 0;
-        Gains +=StableRise(sugarPrice,sugarAmount);
+        while (true) {
+            int State = MarketState();
+            switch (State) {
+                case 1:
+                    StableRise(sugarPrice, sugarAmount);
+                    break;
+                case 2:
+                    StableFall(sugarPrice, sugarAmount);
+                    break;
+                case 3:
+                    FastRise(sugarPrice, sugarAmount);
+                    break;
+                case 4:
+                    FastFall(sugarPrice, sugarAmount);
+                    break;
+            }
+        }
     }
 }
