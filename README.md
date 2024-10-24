@@ -1,3 +1,3 @@
 Burası Ödevler Hariç java uygulamalarımı paylaştığım yer
 Stock Game =Toprak
-Stock      =Semih
+Stock Market =Semih
