@@ -22,7 +22,7 @@ public class Main {
             System.out.println("Yatırdığınız Para = " + yatirilanPara);
             //Kullanıcıya Bildiriyor
 
-            int[] olasilik = {1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,6,6,7};
+            int[] olasilik = {1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3};
             //Sayıların gelme olasılıği 1 en fazla 7 en az
 
             int birinci = sayi.nextInt(0, olasilik.length);
