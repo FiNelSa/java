@@ -26,7 +26,7 @@ public class Main {
             for (double say : arr) {
                 toplam = say;
             }
-            Double nextSugar =(toplam/arr.size()+yeniSugar);
+            Double nextSugar =(toplam/arr.size())*10;
             System.out.println("Sonraki değer tahminlerime göre " + nextSugar + " olabilir.");
             System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
             sugarAmount += scanner.nextInt();
@@ -52,7 +52,7 @@ public class Main {
             for (double say : arr) {
                 toplam = say;
             }
-            Double nextSugar =(toplam/arr.size()+yeniSugar)/2;
+            Double nextSugar =(toplam/arr.size())*10;
             System.out.println("Sonraki değer tahminlerime göre " + nextSugar + " olabilir.");
             System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
             sugarAmount += scanner.nextInt();
@@ -79,7 +79,7 @@ public class Main {
             for (double say : arr) {
                 toplam = say;
             }
-            Double nextSugar =(toplam/arr.size()+yeniSugar)/2;
+            Double nextSugar =(toplam/arr.size())*10;
             System.out.println("Sonraki değer tahminlerime göre " + nextSugar + " olabilir.");
             System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
             sugarAmount += scanner.nextInt();
@@ -106,7 +106,7 @@ public class Main {
             for (double say : arr) {
                 toplam = say;
             }
-            Double nextSugar =(toplam/arr.size()+yeniSugar)/2;
+            Double nextSugar =(toplam/arr.size())*10;
             System.out.println("Sonraki değer tahminlerime göre " + nextSugar + " olabilir.");
             System.out.println("\r Almak İstediğiniz Şeker Miktarını Giriniz:");
             sugarAmount += scanner.nextInt();
