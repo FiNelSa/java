@@ -13,6 +13,7 @@ public class Main {
             boolean validInput = false;
             int winnerNumber = rand.nextInt(1, 37);
 
+            System.out.println("Your Money : " + money);
             System.out.println("How much money do you want to bet?");
             double betMoney = scan.nextDouble();
 
