@@ -11,10 +11,13 @@ public class Game {
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
     };
 
+    boolean royalFlush;
+    boolean straightFlush;
     int firstPairCount;
     int secondPairCount;
     int samePairCount;
     int flushCount;
+    int straightCount;
     int deckValue;
     //0 High-Card
     //1 One pair
@@ -237,6 +240,32 @@ public class Game {
                     }
                 }
 
+                for (int j = 0; j<4; j++){
+                    if (Integer.parseInt(BankHandTry[j].substring(1)) + 1 == Integer.parseInt(BankHandTry[j+1].substring(1))){
+                        straightCount++;
+                    }
+                }
+
+                if (straightCount == 4){
+                    if (flushCount == 10){
+                        if (Integer.parseInt(BankHandTry[4].substring(1)) == 14){
+                            royalFlush = true;
+                            System.out.println("You have ROYAL FLUSH");
+                            if (deckValue<9){
+                                deckValue = 9;
+                            }
+                        }
+                        straightFlush = true;
+                        System.out.println("YOU HAVE STRAIGHT FLUSH");
+                        if (deckValue<8){
+                            deckValue = 8;
+                        }
+                    }
+                    System.out.println("You have straight");
+                    if (deckValue<4){
+                        deckValue = 4;
+                    }
+                }
 
 
                 flushCount = 0;
