@@ -56,7 +56,7 @@ public class Main {
 
             game.TheLastCard();
 
-            game.theAbsoluteTortureToMyself();
+            game.Calculation(money, bet);
 
             System.out.println("Do you want to play again?");
             cont = scan.nextBoolean();

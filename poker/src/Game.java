@@ -18,6 +18,10 @@ public class Game {
     int samePairCount;
     int flushCount;
     int straightCount;
+    int firstBet;
+    int secondBet;
+    int thirdBet;
+    int fourthBet;
     int deckValue;
     //0 High-Card
     //1 One pair
@@ -46,6 +50,10 @@ public class Game {
     String[] BankHandTry = {"0", "0", "0", "0", "0"};
 
     public void GameOpening(){
+        firstBet = rand.nextInt(15, 30);
+        secondBet = rand.nextInt(15, 30);
+        thirdBet = rand.nextInt(15, 30);
+        fourthBet = rand.nextInt(15, 30);
 
         System.out.println("Shuffling Cards");
 
@@ -71,9 +79,16 @@ public class Game {
         giveCard(FourthPlayer, 1);
         setCards(FourthPlayerHand, 1, FourthPlayer[1]);
 
+        System.arraycopy(BankHand, 0, BankHandTry, 0, 5);
+
         System.out.print("Your cards are... ");
         System.out.print(UserHand[0] + " ");
         System.out.println(UserHand[1]);
+
+        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 0, firstBet));
+        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 0, secondBet));
+        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 0, thirdBet));
+        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 0, fourthBet));
     }
 
     public void MidGame(){
@@ -86,42 +101,110 @@ public class Game {
         giveCard(Bank, 2);
         setCards(BankHand, 2, Bank[2]);
         System.out.println("Third Card is : " + BankHand[2]);
+
+
+        System.out.print("First player's bet is : ");
+        System.out.println(Player(FirstPlayerHand, BankHandTry, 3, firstBet));
+        System.out.print("Second player's bet is : ");
+        System.out.println(Player(SecondPlayerHand, BankHandTry, 3, secondBet));
+        System.out.print("Third player's bet is : ");
+        System.out.println(Player(ThirdPlayerHand, BankHandTry, 3, thirdBet));
+        System.out.print("Fourth player's bet is : ");
+        System.out.println(Player(FourthPlayerHand, BankHandTry, 3, fourthBet));
     }
 
     public void FourthCard(){
         giveCard(Bank, 3);
         setCards(BankHand, 3, Bank[3]);
         System.out.println("Fourth Card is : " + BankHand[3]);
+
+        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 4, firstBet));
+        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 4, secondBet));
+        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 4, thirdBet));
+        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 4, fourthBet));
     }
 
     public void TheLastCard(){
         giveCard(Bank, 4);
         setCards(BankHand, 4, Bank[4]);
         System.out.println("The Last Card Is : " + BankHand[4]);
+
+        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 5, firstBet));
+        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 5, secondBet));
+        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 5, thirdBet));
+        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 5, fourthBet));
     }
 
-    public void theAbsoluteTortureToMyself(){
+    public int Calculation(int money, int bet){
+        int firstValue = theAbsoluteTortureToMyself(BankHandTry, FirstPlayerHand);
+        int secondValue = theAbsoluteTortureToMyself(BankHandTry, SecondPlayerHand);
+        int userValue = theAbsoluteTortureToMyself(BankHandTry, UserHand);
+        int thirdValue = theAbsoluteTortureToMyself(BankHandTry, ThirdPlayerHand);
+        int fourthValue = theAbsoluteTortureToMyself(BankHandTry, FourthPlayerHand);
+
+        int[] values = {firstValue, secondValue, userValue, thirdValue, fourthValue};
+
+        System.out.println("First Player's hand is :");
+        for (int j = 0; j<2; j++){
+            System.out.println(FirstPlayerHand[j]);
+        }
+        System.out.println("Second Player's hand is :");
+        for (int j = 0; j<2; j++){
+            System.out.println(SecondPlayerHand[j]);
+        }
+        System.out.println("Third Player's hand is :");
+        for (int j = 0; j<2; j++){
+            System.out.println(ThirdPlayerHand[j]);
+        }
+        System.out.println("Fourth Player's hand is :");
+        for (int j = 0; j<2; j++){
+            System.out.println(FourthPlayerHand[j]);
+        }
+
+        int winner = userValue;
+        for (int j = 0; j<5; j++){
+            if (winner<values[j]){
+                winner = values[j];
+            }
+        }
+
+        if (winner == firstValue){
+            System.out.println("First player has won");
+        }else if (winner == secondValue){
+            System.out.println("Second player has won");
+        }else if (winner == thirdValue){
+            System.out.println("Third player has won");
+        } else if (winner == fourthValue){
+            System.out.println("Fourth player has won");
+        } else if (winner == userValue){
+            System.out.println("You have won");
+        }
+
+        return money - bet;
+    }
+
+    public int theAbsoluteTortureToMyself(String[] bank, String[] user){
         for (int i = 0; i<4; i++){
             for (int ii = i+1; ii<5; ii++){
-                System.arraycopy(BankHand, 0, BankHandTry, 0, 5);
+                System.arraycopy(BankHand, 0, bank, 0, 5);
 
-                BankHandTry[i] = UserHand[0];
-                BankHandTry[ii] = UserHand[1];
+                bank[i] = user[0];
+                bank[ii] = user[1];
 
                 for (int j= 0; j<4; j++){
                     for (int jj = j+1; jj<5; jj++){
-                        if (Integer.parseInt(BankHandTry[jj].substring(1))<Integer.parseInt(BankHandTry[j].substring(1))){
-                            String jjj = BankHandTry[j];
-                            BankHandTry[j] = BankHandTry[jj];
-                            BankHandTry[jj] = jjj;
+                        if (Integer.parseInt(bank[jj].substring(1))<Integer.parseInt(bank[j].substring(1))){
+                            String jjj = bank[j];
+                            bank[j] = bank[jj];
+                            bank[jj] = jjj;
                         }
                     }
                 }
 
-                if (Integer.parseInt(UserHand[0].substring(1)) == Integer.parseInt(UserHand[1].substring(1))){
+                if (Integer.parseInt(user[0].substring(1)) == Integer.parseInt(user[1].substring(1))){
                     for (int iii = 0; iii < 4; iii++){
                         for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (Integer.parseInt(BankHandTry[iii].substring(1)) == Integer.parseInt(BankHandTry[iiii].substring(1))){
+                            if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(bank[iiii].substring(1))){
                                 samePairCount++;
                             }
                         }
@@ -129,19 +212,16 @@ public class Game {
 
                     switch (samePairCount){
                         case 1:
-                            System.out.println("You have a pair");
                             if (deckValue<1){
                                 deckValue = 1;
                             }
                             break;
                         case 3:
-                            System.out.println("You have three of a kind");
                             if (deckValue<3){
                                 deckValue = 3;
                             }
                             break;
                         case 6:
-                            System.out.println("You have four of a kind");
                             if (deckValue<7){
                                 deckValue = 7;
                             }
@@ -151,10 +231,10 @@ public class Game {
                 }else {
                     for (int iii = 0; iii < 4; iii++){
                         for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (Integer.parseInt(BankHandTry[iii].substring(1)) == Integer.parseInt(BankHandTry[iiii].substring(1))){
-                                if (Integer.parseInt(BankHandTry[iii].substring(1)) == Integer.parseInt(UserHand[0].substring(1))){
+                            if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(bank[iiii].substring(1))){
+                                if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(user[0].substring(1))){
                                     firstPairCount++;
-                                } else if (Integer.parseInt(BankHandTry[iii].substring(1)) == Integer.parseInt(UserHand[1].substring(1))){
+                                } else if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(user[1].substring(1))){
                                     secondPairCount++;
                                 }
                             }
@@ -165,19 +245,16 @@ public class Game {
                         case 1:
                             switch (secondPairCount){
                                 case 1:
-                                    System.out.println("You have two pair");
                                     if (deckValue<2){
                                         deckValue = 2;
                                     }
                                     break;
                                 case 3:
-                                    System.out.println("You have Full House");
                                     if (deckValue<6){
                                         deckValue = 6;
                                     }
                                     break;
                                 default:
-                                    System.out.println("You have a pair");
                                     if (deckValue<1){
                                         deckValue = 1;
                                     }
@@ -187,13 +264,11 @@ public class Game {
                         case 3:
                             switch (secondPairCount){
                                 case 1:
-                                    System.out.println("You have Full House");
                                     if (deckValue<6){
                                         deckValue = 6;
                                     }
                                     break;
                                 default:
-                                    System.out.println("You have three of a kind");
                                     if (deckValue<3){
                                         deckValue = 3;
                                     }
@@ -203,19 +278,16 @@ public class Game {
                         default:
                             switch (secondPairCount){
                                 case 1:
-                                    System.out.println("You have a pair");
                                     if (deckValue<1){
                                         deckValue = 1;
                                     }
                                     break;
                                 case 3:
-                                    System.out.println("You have three of a kind");
                                     if (deckValue<3){
                                         deckValue = 3;
                                     }
                                     break;
                                 case 6:
-                                    System.out.println("You have four of a kind");
                                     if (deckValue<7){
                                         deckValue = 7;
                                     }
@@ -226,7 +298,7 @@ public class Game {
                 if (samePairCount == 0 && firstPairCount == 0){
                     for (int iii = 0; iii < 4; iii++){
                         for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (BankHandTry[iii].charAt(0) == BankHandTry[iiii].charAt(0)){
+                            if (bank[iii].charAt(0) == bank[iiii].charAt(0)){
                                 flushCount++;
                             }
                         }
@@ -234,52 +306,111 @@ public class Game {
                 }
 
                 if (flushCount == 10){
-                    System.out.println("You have a flush");
                     if (deckValue<5){
                         deckValue = 5;
                     }
                 }
 
                 for (int j = 0; j<4; j++){
-                    if (Integer.parseInt(BankHandTry[j].substring(1)) + 1 == Integer.parseInt(BankHandTry[j+1].substring(1))){
+                    if (Integer.parseInt(bank[j].substring(1)) + 1 == Integer.parseInt(bank[j+1].substring(1))){
                         straightCount++;
                     }
                 }
 
                 if (straightCount == 4){
                     if (flushCount == 10){
-                        if (Integer.parseInt(BankHandTry[4].substring(1)) == 14){
+                        if (Integer.parseInt(bank[4].substring(1)) == 14){
                             royalFlush = true;
-                            System.out.println("You have ROYAL FLUSH");
                             if (deckValue<9){
                                 deckValue = 9;
                             }
                         }
                         straightFlush = true;
-                        System.out.println("YOU HAVE STRAIGHT FLUSH");
                         if (deckValue<8){
                             deckValue = 8;
                         }
                     }
-                    System.out.println("You have straight");
                     if (deckValue<4){
                         deckValue = 4;
                     }
                 }
 
-
                 flushCount = 0;
                 samePairCount = 0;
                 firstPairCount = 0;
                 secondPairCount = 0;
+                straightCount = 0;
 
                 for (int iii = 0; iii<5; iii++){
-                    System.out.println(BankHandTry[iii]);
+                    System.out.println(bank[iii]);
                 }
                 System.out.println(" ");
             }
         }
-        System.out.println("Your deck value is : " + deckValue);
+        return deckValue;
+    }
+
+    public int Player(String[] player, String[] bank, int cardCount, int bet){
+        switch (cardCount){
+            case 0:
+                if (player.length == 2){
+                    if (player[0].charAt(0) == player[1].charAt(0)){
+                        bet = bet + 20;
+                    }else if (player[0].substring(1) == player[1].substring(1)){
+                        bet = bet + 40;
+                    }
+                }
+                break;
+            case 3:
+                for (int j = 0; j<cardCount; j++){
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].substring(1) == player[0].substring(1)){
+                        bet = bet + 35;
+                    }
+                    if (bank[j].substring(1) == player[1].substring(1)){
+                        bet = bet + 35;
+                    }
+                }
+                break;
+            case 4:
+                for (int j = 0; j<cardCount; j++){
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].substring(1) == player[0].substring(1)){
+                        bet = bet + 35;
+                    }
+                    if (bank[j].substring(1) == player[1].substring(1)){
+                        bet = bet + 35;
+                    }
+                }
+                break;
+            case 5:
+                for (int j = 0; j<cardCount; j++){
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].charAt(0) == player[0].charAt(0)){
+                        bet = bet + 0;
+                    }
+                    if (bank[j].substring(1) == player[0].substring(1)){
+                        bet = bet + 35;
+                    }
+                    if (bank[j].substring(1) == player[1].substring(1)){
+                        bet = bet + 35;
+                    }
+                }
+                break;
+        }
+        return bet;
     }
 
     public int checkRaise(int raise, int ante){
