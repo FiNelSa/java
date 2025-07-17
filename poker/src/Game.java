@@ -1,592 +1,423 @@
 //♠ ♥ ♦ ♣
+//Spades, Hearts, Diamonds, Clubs
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Game {
     Random rand = new Random();
 
-    int[] Deck = {
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-            14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-            27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-            40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
+    //Defining cards
+    card nullCard = new card(card.suits.Zero, 0 , "Null");
+    card[] deck = {
+            nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard,
+            nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard,
+            nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard,
+            nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard, nullCard
     };
 
-    boolean royalFlush;
-    boolean straightFlush;
-    int firstPairCount;
-    int secondPairCount;
-    int samePairCount;
-    int flushCount;
-    int straightCount;
-    int firstBet;
-    int secondBet;
-    int thirdBet;
-    int fourthBet;
-    int deckValue;
-    //0 High-Card
-    //1 One pair
-    //2 Two Pair
-    //3 Three of a Kind
-    //4 Straight
-    //5 Flush
-    //6 Full House
-    //7 Four of a Kind
-    //8 Straight Flush
-    //9 Royal Flush
+    public void getDeck(){
+        for (int i = 0; i<52; i++){//Selecting a card
+            card.suits tempSuit;
+            String tempSuitWriting;
+            int tempNumber;
+            String tempNumberWriting;
+            String tempWriting;
 
-    int[] FirstPlayer = {0, 0};
-    String[] FirstPlayerHand = {"0", "0"};
-    int[] SecondPlayer = {0, 0};
-    String[] SecondPlayerHand = {"0", "0"};
-    int[] User = {0, 0};
-    String[] UserHand = {"0", "0"};
-    int[] ThirdPlayer = {0, 0};
-    String[] ThirdPlayerHand = {"0", "0"};
-    int[] FourthPlayer = {0, 0};
-    String[] FourthPlayerHand = {"0", "0"};
+            if (i<13){//If first suit
+                tempSuit = card.suits.Clubs;
+                tempSuitWriting = "♣";
+            }else if (i<26){//Second suit
+                tempSuit = card.suits.Diamonds;
+                tempSuitWriting = "♦";
+            }else if (i<39){//Third suit
+                tempSuit = card.suits.Hearts;
+                tempSuitWriting = "♥";
+            }else{//Fourth suit
+                tempSuit = card.suits.Spades;
+                tempSuitWriting = "♠";
+            }
+            if (i%13 == 0) {//If its remainder is zero it's an ACE
+                tempNumber = 14;
+            }else {
+                tempNumber = (i%13) + 1;
+            }
+            tempNumberWriting = switch (i % 13) {//Same as before
+                case 0 -> "A";
+                case 1 -> "2";
+                case 2 -> "3";
+                case 3 -> "4";
+                case 4 -> "5";
+                case 5 -> "6";
+                case 6 -> "7";
+                case 7 -> "8";
+                case 8 -> "9";
+                case 9 -> "10";
+                case 10 -> "J";
+                case 11 -> "Q";
+                case 12 -> "K";
+                default -> "null";
+            };
+            tempWriting = tempSuitWriting + tempNumberWriting;//Uniting writings of suit and number
+            deck[i] = new card(tempSuit, tempNumber, tempWriting);//Creating a new card with these variables and adding to the deck
+        }
+    }
 
-    int[] Bank = {0, 0, 0, 0, 0};
-    String[] BankHand = {"0", "0", "0", "0", "0"};
-    String[] BankHandTry = {"0", "0", "0", "0", "0"};
+    //Adding the user as a player
+    player user = new player(true, "User");
+    ArrayList<player> players = new ArrayList<>();
+    public void addingPlayers(int playerCount){
+        for (int i = 1; i<playerCount+1; i++){
+            players.add(new player(true, ("Player " + i)));
+        }
+        players.add(user);
+    }
 
-    public void GameOpening(){
-        firstBet = rand.nextInt(15, 30);
-        secondBet = rand.nextInt(15, 30);
-        thirdBet = rand.nextInt(15, 30);
-        fourthBet = rand.nextInt(15, 30);
+    //Creating bank
+    player bankHand = new player(true, "bank");
+    //Defining copy of bank, to use while trying to figure out players' decks' values
+    card[] bankHandTry = {nullCard, nullCard, nullCard, nullCard, nullCard};
 
+    int thisDeckValue;
+    int winningValue;
+    int highestBet;
+    int totalBet;
+
+    public void gameOpening(){
+        highestBet = 0;
+
+        //Placing blind bets
+        betSetter();
+
+        //Setting the call bet
         System.out.println("Shuffling Cards");
 
-        giveCard(FirstPlayer, 0);
-        setCards(FirstPlayerHand, 0, FirstPlayer[0]);
-        giveCard(SecondPlayer, 0);
-        setCards(SecondPlayerHand, 0, SecondPlayer[0]);
-        giveCard(User, 0);
-        setCards(UserHand, 0, User[0]);
-        giveCard(ThirdPlayer, 0);
-        setCards(ThirdPlayerHand, 0, ThirdPlayer[0]);
-        giveCard(FourthPlayer, 0);
-        setCards(FourthPlayerHand, 0, FourthPlayer[0]);
-
-        giveCard(FirstPlayer, 1);
-        setCards(FirstPlayerHand, 1, FirstPlayer[1]);
-        giveCard(SecondPlayer, 1);
-        setCards(SecondPlayerHand, 1, SecondPlayer[1]);
-        giveCard(User, 1);
-        setCards(UserHand, 1, User[1]);
-        giveCard(ThirdPlayer, 1);
-        setCards(ThirdPlayerHand, 1, ThirdPlayer[1]);
-        giveCard(FourthPlayer, 1);
-        setCards(FourthPlayerHand, 1, FourthPlayer[1]);
-
-        System.arraycopy(BankHand, 0, BankHandTry, 0, 5);
-
-        System.out.print("Your cards are... ");
-        System.out.print(UserHand[0] + " ");
-        System.out.println(UserHand[1]);
-
-        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 0, firstBet));
-        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 0, secondBet));
-        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 0, thirdBet));
-        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 0, fourthBet));
-    }
-
-    public void MidGame(){
-        giveCard(Bank, 0);
-        setCards(BankHand, 0, Bank[0]);
-        System.out.println("First Card is : " + BankHand[0]);
-        giveCard(Bank, 1);
-        setCards(BankHand, 1, Bank[1]);
-        System.out.println("Second Card is : " + BankHand[1]);
-        giveCard(Bank, 2);
-        setCards(BankHand, 2, Bank[2]);
-        System.out.println("Third Card is : " + BankHand[2]);
-
-
-        System.out.print("First player's bet is : ");
-        System.out.println(Player(FirstPlayerHand, BankHandTry, 3, firstBet));
-        System.out.print("Second player's bet is : ");
-        System.out.println(Player(SecondPlayerHand, BankHandTry, 3, secondBet));
-        System.out.print("Third player's bet is : ");
-        System.out.println(Player(ThirdPlayerHand, BankHandTry, 3, thirdBet));
-        System.out.print("Fourth player's bet is : ");
-        System.out.println(Player(FourthPlayerHand, BankHandTry, 3, fourthBet));
-    }
-
-    public void FourthCard(){
-        giveCard(Bank, 3);
-        setCards(BankHand, 3, Bank[3]);
-        System.out.println("Fourth Card is : " + BankHand[3]);
-
-        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 4, firstBet));
-        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 4, secondBet));
-        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 4, thirdBet));
-        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 4, fourthBet));
-    }
-
-    public void TheLastCard(){
-        giveCard(Bank, 4);
-        setCards(BankHand, 4, Bank[4]);
-        System.out.println("The Last Card Is : " + BankHand[4]);
-
-        System.out.println("First player's bet is : " + Player(FirstPlayerHand, BankHandTry, 5, firstBet));
-        System.out.println("Second player's bet is : " + Player(SecondPlayerHand, BankHandTry, 5, secondBet));
-        System.out.println("Third player's bet is : " + Player(ThirdPlayerHand, BankHandTry, 5, thirdBet));
-        System.out.println("Fourth player's bet is : " + Player(FourthPlayerHand, BankHandTry, 5, fourthBet));
-    }
-
-    public int Calculation(int money, int bet){
-        int firstValue = theAbsoluteTortureToMyself(BankHandTry, FirstPlayerHand);
-        int secondValue = theAbsoluteTortureToMyself(BankHandTry, SecondPlayerHand);
-        int userValue = theAbsoluteTortureToMyself(BankHandTry, UserHand);
-        int thirdValue = theAbsoluteTortureToMyself(BankHandTry, ThirdPlayerHand);
-        int fourthValue = theAbsoluteTortureToMyself(BankHandTry, FourthPlayerHand);
-
-        int[] values = {firstValue, secondValue, userValue, thirdValue, fourthValue};
-
-        System.out.println("First Player's hand is :");
-        for (int j = 0; j<2; j++){
-            System.out.println(FirstPlayerHand[j]);
-        }
-        System.out.println("Second Player's hand is :");
-        for (int j = 0; j<2; j++){
-            System.out.println(SecondPlayerHand[j]);
-        }
-        System.out.println("Third Player's hand is :");
-        for (int j = 0; j<2; j++){
-            System.out.println(ThirdPlayerHand[j]);
-        }
-        System.out.println("Fourth Player's hand is :");
-        for (int j = 0; j<2; j++){
-            System.out.println(FourthPlayerHand[j]);
+        //Giving cards
+        for (player player : players) {
+            player.setFirstCard(giveCard());
         }
 
-        int winner = userValue;
-        for (int j = 0; j<5; j++){
-            if (winner<values[j]){
-                winner = values[j];
+        for (player player : players) {
+            player.setSecondCard(giveCard());
+        }
+
+        //Looking for who has a pair in their hand
+        findingStatsForAll();
+
+        cardWriter(user, 2);
+
+        betSetter();
+    }
+
+    public void midGame(){
+        //Opening first three cards
+        bankHand.setFirstCard(giveCard());
+        bankHand.setSecondCard(giveCard());
+        bankHand.setThirdCard(giveCard());
+        System.out.println("Bank's hand is :");
+        cardWriter(bankHand, 3);
+
+        findingStatsForAll();
+
+        betSetter();
+    }
+
+    public void fourthCard(){
+        bankHand.setFourthCard(giveCard());
+        cardWriter(bankHand, 4);
+
+        findingStatsForAll();
+
+        betSetter();
+    }
+
+    public void theLastCard(){
+        bankHand.setFifthCard(giveCard());
+        cardWriter(bankHand, 5);
+
+        for (player player : players) {
+            cardWriter(player, 2);
+        }
+
+        findingStatsForAll();
+
+        betSetter();
+    }
+
+    public int calculation(int money, int bet){
+        for (player player : players) {
+            totalBet += player.getBet();
+        }
+
+        winningValue = 0;
+
+        for (player player : players) {
+            if (winningValue < player.getDeckValue()) {
+                winningValue = player.getDeckValue();
             }
         }
 
-        if (winner == firstValue){
-            System.out.println("First player has won");
-        }else if (winner == secondValue){
-            System.out.println("Second player has won");
-        }else if (winner == thirdValue){
-            System.out.println("Third player has won");
-        } else if (winner == fourthValue){
-            System.out.println("Fourth player has won");
-        } else if (winner == userValue){
-            System.out.println("You have won");
-        }
-
-        return money - bet;
-    }
-
-    public int theAbsoluteTortureToMyself(String[] bank, String[] user){
-        for (int i = 0; i<4; i++){
-            for (int ii = i+1; ii<5; ii++){
-                System.arraycopy(BankHand, 0, bank, 0, 5);
-
-                bank[i] = user[0];
-                bank[ii] = user[1];
-
-                for (int j= 0; j<4; j++){
-                    for (int jj = j+1; jj<5; jj++){
-                        if (Integer.parseInt(bank[jj].substring(1))<Integer.parseInt(bank[j].substring(1))){
-                            String jjj = bank[j];
-                            bank[j] = bank[jj];
-                            bank[jj] = jjj;
-                        }
-                    }
-                }
-
-                if (Integer.parseInt(user[0].substring(1)) == Integer.parseInt(user[1].substring(1))){
-                    for (int iii = 0; iii < 4; iii++){
-                        for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(bank[iiii].substring(1))){
-                                samePairCount++;
-                            }
-                        }
-                    }
-
-                    switch (samePairCount){
-                        case 1:
-                            if (deckValue<1){
-                                deckValue = 1;
-                            }
-                            break;
-                        case 3:
-                            if (deckValue<3){
-                                deckValue = 3;
-                            }
-                            break;
-                        case 6:
-                            if (deckValue<7){
-                                deckValue = 7;
-                            }
-                            break;
-                    }
-
-                }else {
-                    for (int iii = 0; iii < 4; iii++){
-                        for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(bank[iiii].substring(1))){
-                                if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(user[0].substring(1))){
-                                    firstPairCount++;
-                                } else if (Integer.parseInt(bank[iii].substring(1)) == Integer.parseInt(user[1].substring(1))){
-                                    secondPairCount++;
-                                }
-                            }
-                        }
-                    }
-
-                    switch (firstPairCount){
-                        case 1:
-                            switch (secondPairCount){
-                                case 1:
-                                    if (deckValue<2){
-                                        deckValue = 2;
-                                    }
-                                    break;
-                                case 3:
-                                    if (deckValue<6){
-                                        deckValue = 6;
-                                    }
-                                    break;
-                                default:
-                                    if (deckValue<1){
-                                        deckValue = 1;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case 3:
-                            switch (secondPairCount){
-                                case 1:
-                                    if (deckValue<6){
-                                        deckValue = 6;
-                                    }
-                                    break;
-                                default:
-                                    if (deckValue<3){
-                                        deckValue = 3;
-                                    }
-                                    break;
-                            }
-                            break;
-                        default:
-                            switch (secondPairCount){
-                                case 1:
-                                    if (deckValue<1){
-                                        deckValue = 1;
-                                    }
-                                    break;
-                                case 3:
-                                    if (deckValue<3){
-                                        deckValue = 3;
-                                    }
-                                    break;
-                                case 6:
-                                    if (deckValue<7){
-                                        deckValue = 7;
-                                    }
-                            }
-                    }
-                }
-
-                if (samePairCount == 0 && firstPairCount == 0){
-                    for (int iii = 0; iii < 4; iii++){
-                        for (int iiii = iii + 1; iiii < 5; iiii++){
-                            if (bank[iii].charAt(0) == bank[iiii].charAt(0)){
-                                flushCount++;
-                            }
-                        }
-                    }
-                }
-
-                if (flushCount == 10){
-                    if (deckValue<5){
-                        deckValue = 5;
-                    }
-                }
-
-                for (int j = 0; j<4; j++){
-                    if (Integer.parseInt(bank[j].substring(1)) + 1 == Integer.parseInt(bank[j+1].substring(1))){
-                        straightCount++;
-                    }
-                }
-
-                if (straightCount == 4){
-                    if (flushCount == 10){
-                        if (Integer.parseInt(bank[4].substring(1)) == 14){
-                            royalFlush = true;
-                            if (deckValue<9){
-                                deckValue = 9;
-                            }
-                        }
-                        straightFlush = true;
-                        if (deckValue<8){
-                            deckValue = 8;
-                        }
-                    }
-                    if (deckValue<4){
-                        deckValue = 4;
-                    }
-                }
-
-                flushCount = 0;
-                samePairCount = 0;
-                firstPairCount = 0;
-                secondPairCount = 0;
-                straightCount = 0;
-
-                for (int iii = 0; iii<5; iii++){
-                    System.out.println(bank[iii]);
-                }
-                System.out.println(" ");
+        for (player player : players) {
+            if (player.getDeckValue() == winningValue) {
+                tieBreaker(player);
+            } else {
+                player.setDeckValue(0);
             }
         }
-        return deckValue;
+
+        winningValue = 0;
+
+        for (player player : players) {
+            if (winningValue < player.getDeckValue()) {
+                winningValue = player.getDeckValue();
+            }
+        }
+
+        for (player player : players) {
+            if (winningValue == player.getDeckValue()) {
+                System.out.println(player.getPlayerName() + " has won");
+            }
+        }
+        if (user.getDeckValue() == winningValue){
+            return totalBet;
+        }else {
+            return money - bet;
+        }
     }
 
-    public int Player(String[] player, String[] bank, int cardCount, int bet){
-        switch (cardCount){
-            case 0:
-                if (player.length == 2){
-                    if (player[0].charAt(0) == player[1].charAt(0)){
-                        bet = bet + 20;
-                    }else if (player[0].substring(1) == player[1].substring(1)){
-                        bet = bet + 40;
+    public void pairSeeker(card i1, player player){
+        if (player.getFirstCard().getNumber() == player.getSecondCard().getNumber()){
+            if (i1.getNumber() == player.firstCard.getNumber()){
+                player.increaseSamePairCount();
+            }
+        }else{
+            if (i1.getNumber() == player.firstCard.getNumber()){
+                player.increaseFirstPairCount();
+            }else if (i1.getNumber() == player.secondCard.getNumber()){
+                player.increaseSecondPairCount();
+            }
+        }
+    }
+
+    public void straightSeeker(card i1, card i2, player player){
+        if (i1.getNumber() + 1 == i2.getNumber()){
+            player.increaseStraightCount();
+        }
+    }
+
+    public void deckStatFinder(card[] bank, player player){
+        valueSetter(bank, player);
+        for (int i = 0; i< bank.length-1; i++){
+            for (int i2 = i+1; i2<bank.length; i2++){//Two cards are selected as I and I2
+                for (int i3 = 0; i3 < 5; i3++){//I3 is the five possibility of two cards arrangement with the middle cards
+
+                    deckArranger(bank, player, i3, i2, i);//Placing user's cards in the bank's hand and arranging in order
+
+                    for (int i4 = 0; i4 < bank.length-1; i4++){
+                        pairSeeker(bank[i4], player);
+                        straightSeeker(bank[i4], bank[i4+1], player);
                     }
+                    valueSetter(bank, player);
+
+                    player.setSamePairCount(0);
+                    player.setFirstPairCount(0);
+                    player.setSecondPairCount(0);
+                    player.setStraightCount(0);
+                    player.setFlush(false);
                 }
+            }
+        }
+    }
+
+    public void findingStatsForAll(){
+        for (player player : players) {
+            deckStatFinder(bankHandTry, player);
+        }
+    }
+
+    public void deckArranger(card[] bank, player player, int cards, int card2Number, int card1Number){
+        //Copying the bank's hand
+        bank[0] = bankHand.getFirstCard();
+        bank[1] = bankHand.getSecondCard();
+        bank[2] = bankHand.getThirdCard();
+        bank[3] = bankHand.getFourthCard();
+        bank[4] = bankHand.getFifthCard();
+        switch (cards){
+            case 0://Replacing card 1 with first card
+                bank[card1Number] = player.getFirstCard();
                 break;
-            case 3:
-                for (int j = 0; j<cardCount; j++){
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].substring(1) == player[0].substring(1)){
-                        bet = bet + 35;
-                    }
-                    if (bank[j].substring(1) == player[1].substring(1)){
-                        bet = bet + 35;
-                    }
-                }
+            case  1://Replacing card 2 with first card
+                bank[card2Number] = player.getFirstCard();
                 break;
-            case 4:
-                for (int j = 0; j<cardCount; j++){
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].substring(1) == player[0].substring(1)){
-                        bet = bet + 35;
-                    }
-                    if (bank[j].substring(1) == player[1].substring(1)){
-                        bet = bet + 35;
-                    }
-                }
+            case 2://Replacing card 1 with second card
+                bank[card1Number] = player.getSecondCard();
                 break;
-            case 5:
-                for (int j = 0; j<cardCount; j++){
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].charAt(0) == player[0].charAt(0)){
-                        bet = bet + 0;
-                    }
-                    if (bank[j].substring(1) == player[0].substring(1)){
-                        bet = bet + 35;
-                    }
-                    if (bank[j].substring(1) == player[1].substring(1)){
-                        bet = bet + 35;
-                    }
-                }
+            case 3://Replacing card 2 with second card
+                bank[card2Number] = player.getSecondCard();
+                break;
+            case 4://Replacing both cards with user's cards
+                bank[card1Number] = player.getFirstCard();
+                bank[card2Number] = player.getSecondCard();
                 break;
         }
-        return bet;
-    }
-
-    public int checkRaise(int raise, int ante){
-        if (raise<ante){
-            System.out.println("You can't raise under ante! Your raise is set to 15.");
-            raise = 15;
+        //Placing cards in number order
+        for (int j= 0; j<bank.length-1; j++){
+            for (int j2 = j+1; j2<bank.length; j2++){
+                if (bank[j2].getNumber() < bank[j].getNumber()){
+                    card j3 = bank[j];
+                    bank[j] = bank[j2];
+                    bank[j2] = j3;
+                }
+            }
         }
-        return raise;
     }
 
-    public void giveCard(int[] player, int card){
-        player[card] = rand.nextInt(0, 52);
-        while(Deck[player[card]] == 0){
-            player[card] = rand.nextInt(0, 52);
-        }
-        Deck[player[card]] = 0;
-    }
-
-    public void setCards(String[] player, int cardNumber, int cardID){
-        switch (cardID){
-            case 0:
-                player[cardNumber] = "♣14";
-                break;
-            case 1:
-                player[cardNumber] = "♣2";
-                break;
+    public void valueSetter(card[] bank, player player){
+        switch (player.getSamePairCount()){
             case 2:
-                player[cardNumber] = "♣3";
+                setValue(1, player);//One Pair
                 break;
             case 3:
-                player[cardNumber] = "♣4";
+                setValue(3, player);//Three of a Kind
                 break;
             case 4:
-                player[cardNumber] = "♣5";
+                setValue(7, player);//Four of a Kind
+        }
+        switch (player.getFirstPairCount()){
+            case 2:
+                switch (player.getSecondPairCount()){
+                    case 2:
+                        setValue(2, player);//Two Pairs
+                        break;
+                    case 3:
+                        setValue(6, player);//Full House
+                        break;
+                    default:
+                        setValue(1, player);//One Pair
+                        break;
+                }
                 break;
-            case 5:
-                player[cardNumber] = "♣6";
+            case 3:
+                switch (player.getSecondPairCount()){
+                    case 2:
+                        setValue(6, player);//Full House
+                        break;
+                    default:
+                        setValue(3, player);//Three of a Kind
+                        break;
+                }
                 break;
-            case 6:
-                player[cardNumber] = "♣7";
+            case 4:
+                setValue(7, player);//Four of a Kind
                 break;
-            case 7:
-                player[cardNumber] = "♣8";
+            default:
+                switch (player.getSecondPairCount()){
+                    case 2:
+                        setValue(1, player);//One Pair
+                        break;
+                    case 3:
+                        setValue(3, player);//Three of a Kind
+                        break;
+                    case 4:
+                        setValue(7, player);//Four of a Kind
+                        break;
+                }
                 break;
-            case 8:
-                player[cardNumber] = "♣9";
-                break;
-            case 9:
-                player[cardNumber] = "♣10";
-                break;
-            case 10:
-                player[cardNumber] = "♣11";
-                break;
-            case 11:
-                player[cardNumber] = "♣12";
-                break;
-            case 12:
-                player[cardNumber] = "♣13";
-                break;
-            case 13:
-                player[cardNumber] = "♦14";
-                break;
-            case 14:
-                player[cardNumber] = "♦2";
-                break;
-            case 15:
-                player[cardNumber] = "♦3";
-                break;
-            case 16:
-                player[cardNumber] = "♦4";
-                break;
-            case 17:
-                player[cardNumber] = "♦5";
-                break;
-            case 18:
-                player[cardNumber] = "♦6";
-                break;
-            case 19:
-                player[cardNumber] = "♦7";
-                break;
-            case 20:
-                player[cardNumber] = "♦8";
-                break;
-            case 21:
-                player[cardNumber] = "♦9";
-                break;
-            case 22:
-                player[cardNumber] = "♦10";
-                break;
-            case 23:
-                player[cardNumber] = "♦11";
-                break;
-            case 24:
-                player[cardNumber] = "♦12";
-                break;
-            case 25:
-                player[cardNumber] = "♦13";
-                break;
-            case 26:
-                player[cardNumber] = "♥14";
-                break;
-            case 27:
-                player[cardNumber] = "♥2";
-                break;
-            case 28:
-                player[cardNumber] = "♥3";
-                break;
-            case 29:
-                player[cardNumber] = "♥4";
-                break;
-            case 30:
-                player[cardNumber] = "♥5";
-                break;
-            case 31:
-                player[cardNumber] = "♥6";
-                break;
-            case 32:
-                player[cardNumber] = "♥7";
-                break;
-            case 33:
-                player[cardNumber] = "♥8";
-                break;
-            case 34:
-                player[cardNumber] = "♥9";
-                break;
-            case 35:
-                player[cardNumber] = "♥10";
-                break;
-            case 36:
-                player[cardNumber] = "♥11";
-                break;
-            case 37:
-                player[cardNumber] = "♥12";
-                break;
-            case 38:
-                player[cardNumber] = "♥13";
-                break;
-            case 39:
-                player[cardNumber] = "♠14";
-                break;
-            case 40:
-                player[cardNumber] = "♠2";
-                break;
-            case 41:
-                player[cardNumber] = "♠3";
-                break;
-            case 42:
-                player[cardNumber] = "♠4";
-                break;
-            case 43:
-                player[cardNumber] = "♠5";
-                break;
-            case 44:
-                player[cardNumber] = "♠6";
-                break;
-            case 45:
-                player[cardNumber] = "♠7";
-                break;
-            case 46:
-                player[cardNumber] = "♠8";
-                break;
-            case 47:
-                player[cardNumber] = "♠9";
-                break;
-            case 48:
-                player[cardNumber] = "♠10";
-                break;
-            case 49:
-                player[cardNumber] = "♠11";
-                break;
-            case 50:
-                player[cardNumber] = "♠12";
-                break;
-            case 51:
-                player[cardNumber] = "♠13";
-                break;
+        }
+        if (bank[0].getSuit() == bank[1].getSuit()){
+            if (bank[1].getSuit() == bank[2].getSuit()){
+                if (bank[2].getSuit() == bank[3].getSuit()){
+                    if (bank[3].getSuit() == bank[4].getSuit() && bank[4].getSuit() != card.suits.Zero){
+                        player.setFlush(true);
+                    }
+                }
+            }
+        }
+        if (player.getStraightCount() == 4){
+            if (player.isFlush()){
+                if (bank[4].getNumber() == 14){
+                    setValue(9, player);//Royal Flush
+                }else {
+                    setValue(8, player);//Straight Flush
+                }
+            }else{
+                setValue(4, player);//Straight
+            }
+        }
+        zeroingBets();
+    }
+
+    public void setValue(int value, player player){
+        if (player.getDeckValue()<value){
+            player.setDeckValue(value);
+        }
+        thisDeckValue = value;
+    }
+
+    public card giveCard(){
+        int cardNumber = rand.nextInt(0, 52);
+        while(deck[cardNumber].getSuit() == card.suits.Zero){
+            cardNumber = rand.nextInt(0, 52);
+        }
+
+        card temp = deck[cardNumber];
+        deck[cardNumber] = new card(card.suits.Zero, 0,"0");
+        return temp;
+    }
+
+    public void betSetter(){
+        setHighestBet();
+        for (int i = 0; i < players.size()-1; i++) {
+            if (players.get(i).playing && players.get(i).getDeckValue() != highestBet) {
+                players.get(i).playTurn(highestBet);
+            }
+        }
+        setHighestBet();
+        Main.setBet();
+    }
+
+    public void setHighestBet(){
+        for (player player : players) {
+            if (highestBet < player.getBet()) {
+                highestBet = player.getBet();
+            }
+        }
+    }
+
+    public void cardWriter(player player, int cardCount){
+        for (int i = 0; i<cardCount; i++){
+            switch (i){
+                case 0:
+                    System.out.print(player.firstCard.getWriting());
+                    break;
+                case 1:
+                    System.out.print(player.secondCard.getWriting());
+                    break;
+                case 2:
+                    System.out.print(player.thirdCard.getWriting());
+                    break;
+                case 3:
+                    System.out.print(player.fourthCard.getWriting());
+                    break;
+                case 4:
+                    System.out.print(player.fifthCard.getWriting());
+                    break;
+            }
+            System.out.print(", ");
+        }
+        System.out.println(" are the cards of " + player.getPlayerName());
+    }
+
+    public void tieBreaker(player player){
+        if (winningValue == player.getDeckValue()){
+            player.setDeckValue(player.getFirstCard().getNumber() + player.getSecondCard().getNumber());
+        }else{
+            player.setDeckValue(0);
+        }
+    }
+
+    public void zeroingBets(){
+        for (player player : players){
+            player.setBet(0);
         }
     }
 }
