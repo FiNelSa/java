@@ -12,8 +12,6 @@ public class Main {
     static int bet = 0;
 
     public static void main(String[] args) {
-        gui gd = new gui(1280, 720);
-        gd.setUpGUI();
 
         while(playAgain) {
             game.getDeck();
@@ -47,7 +45,7 @@ public class Main {
 
         money -= raise;
         bet += raise;
-        game.user.setBet(bet);
+        game.user.bet = bet;
         while(bet < game.highestBet){
             System.out.println("Money : " + money);
             System.out.println("Your bet is : " + bet);
@@ -57,7 +55,7 @@ public class Main {
 
             money -= raise;
             bet += raise;
-            game.user.setBet(bet);
+            game.user.bet = bet;
         }
         if (game.highestBet < bet){
             game.setHighestBet();

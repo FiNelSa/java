@@ -20,100 +20,26 @@ public class player {
         this.playerName = userName;
     }
 
-    public card getFirstCard() {
-        return firstCard;
-    }
-    public void setFirstCard(card firstCard){
+    public player(card firstCard, card secondCard, card thirdCard, card fourthCard, card fifthCard, String playerName){
         this.firstCard = firstCard;
-    }
-
-    public card getSecondCard() {
-        return secondCard;
-    }
-    public void setSecondCard(card secondCard) {
         this.secondCard = secondCard;
-    }
-
-    public card getThirdCard(){
-        return thirdCard;
-    }
-    public void setThirdCard(card thirdcard) {
-        this.thirdCard = thirdcard;
-    }
-
-    public card getFourthCard() {
-        return fourthCard;
-    }
-    public void setFourthCard(card fourthCard) {
+        this.thirdCard = thirdCard;
         this.fourthCard = fourthCard;
-    }
-
-    public card getFifthCard() {
-        return fifthCard;
-    }
-    public void setFifthCard(card fifthCard) {
         this.fifthCard = fifthCard;
+        this.playerName = playerName;
     }
 
-    public int getDeckValue() {
-        return deckValue;
-    }
-    public void setDeckValue(int deckValue) {
-        this.deckValue = deckValue;
-    }
-
-    public int getBet() {
-        return bet;
-    }
-    public void setBet(int bet) {
-        this.bet = bet;
-    }
-
-    public int getSamePairCount() {
-        return samePairCount;
-    }
-    public void setSamePairCount(int samePairCount) {
-        this.samePairCount = samePairCount;
-    }
     public void increaseSamePairCount(){
         this.samePairCount++;
-    }
-
-    public int getFirstPairCount() {
-        return firstPairCount;
-    }
-    public void setFirstPairCount(int firstPairCount) {
-        this.firstPairCount = firstPairCount;
     }
     public void increaseFirstPairCount(){
         this.firstPairCount++;
     }
-
-    public int getSecondPairCount() {
-        return secondPairCount;
-    }
-    public void setSecondPairCount(int secondPairCount) {
-        this.secondPairCount = secondPairCount;
-    }
     public void increaseSecondPairCount(){
         this.secondPairCount++;
     }
-
-    public int getStraightCount() {
-        return straightCount;
-    }
-    public void setStraightCount(int straightCount) {
-        this.straightCount = straightCount;
-    }
     public void increaseStraightCount(){
         this.straightCount++;
-    }
-
-    public boolean isFlush() {
-        return isFlush;
-    }
-    public void setFlush(boolean isFlush) {
-        this.isFlush = isFlush;
     }
 
     public String getPlayerName(){
@@ -121,38 +47,38 @@ public class player {
     }
 
     public void playTurn(int highestBet){
-        if (getBet() == 0){
-            setBet(10);
+        if (bet == 0){
+            bet = 10;
         }
-        double gap = (double) highestBet /getBet();
+        double gap = (double) highestBet / bet;
         if (gap == 0) {
-            switch (getDeckValue()){
+            switch (deckValue){
                 case 0:
                     break;
                 case 1:
-                    setBet(getBet()+25);
+                    bet = bet + 25;
                     break;
                 case 2:
-                    setBet(getBet()+35);
+                    bet = bet + 35;
                     break;
                 default:
-                    setBet(getBet()+50);
+                    bet = bet + 55;
             }
         }else if (gap<1.5){
-            setBet(highestBet);
+            bet = highestBet;
         }else if (gap<2){
-            if (1<=getDeckValue()){
-                setBet(highestBet);
+            if (1<=deckValue){
+                bet = highestBet;
             }
-        }else if(2<=getDeckValue()){
-            setBet(highestBet+25);
+        }else if(2<=deckValue){
+            bet = highestBet+25;
         }else{
             this.playing = false;
-            System.out.println(getPlayerName() + " has folded");
+            System.out.println(playerName + " has folded");
         }
 
         if (playing){
-            System.out.println(getPlayerName() + "'s bet is : " + getBet());
+            System.out.println(playerName + "'s bet is : " + bet);
         }
     }
 }

@@ -65,6 +65,7 @@ public class Game {
     //Adding the user as a player
     player user = new player(true, "User");
     ArrayList<player> players = new ArrayList<>();
+
     public void addingPlayers(int playerCount){
         for (int i = 1; i<playerCount+1; i++){
             players.add(new player(true, ("Player " + i)));
@@ -73,7 +74,7 @@ public class Game {
     }
 
     //Creating bank
-    player bankHand = new player(true, "bank");
+    player bankHand = new player(nullCard, nullCard, nullCard, nullCard, nullCard, "bank");
     //Defining copy of bank, to use while trying to figure out players' decks' values
     card[] bankHandTry = {nullCard, nullCard, nullCard, nullCard, nullCard};
 
@@ -93,11 +94,11 @@ public class Game {
 
         //Giving cards
         for (player player : players) {
-            player.setFirstCard(giveCard());
+            player.firstCard = giveCard();
         }
 
         for (player player : players) {
-            player.setSecondCard(giveCard());
+            player.secondCard = giveCard();
         }
 
         //Looking for who has a pair in their hand
@@ -110,9 +111,9 @@ public class Game {
 
     public void midGame(){
         //Opening first three cards
-        bankHand.setFirstCard(giveCard());
-        bankHand.setSecondCard(giveCard());
-        bankHand.setThirdCard(giveCard());
+        bankHand.firstCard = giveCard();
+        bankHand.secondCard = giveCard();
+        bankHand.thirdCard = giveCard();
         System.out.println("Bank's hand is :");
         cardWriter(bankHand, 3);
 
@@ -122,7 +123,7 @@ public class Game {
     }
 
     public void fourthCard(){
-        bankHand.setFourthCard(giveCard());
+        bankHand.fourthCard = giveCard();
         cardWriter(bankHand, 4);
 
         findingStatsForAll();
@@ -131,7 +132,7 @@ public class Game {
     }
 
     public void theLastCard(){
-        bankHand.setFifthCard(giveCard());
+        bankHand.fifthCard = giveCard();
         cardWriter(bankHand, 5);
 
         for (player player : players) {
@@ -145,39 +146,39 @@ public class Game {
 
     public int calculation(int money, int bet){
         for (player player : players) {
-            totalBet += player.getBet();
+            totalBet += player.bet;
         }
 
         winningValue = 0;
 
         for (player player : players) {
-            if (winningValue < player.getDeckValue()) {
-                winningValue = player.getDeckValue();
+            if (winningValue < player.deckValue) {
+                winningValue = player.deckValue;
             }
         }
 
         for (player player : players) {
-            if (player.getDeckValue() == winningValue) {
+            if (player.deckValue == winningValue) {
                 tieBreaker(player);
             } else {
-                player.setDeckValue(0);
+                player.deckValue = 0;
             }
         }
 
         winningValue = 0;
 
         for (player player : players) {
-            if (winningValue < player.getDeckValue()) {
-                winningValue = player.getDeckValue();
+            if (winningValue < player.deckValue) {
+                winningValue = player.deckValue;
             }
         }
 
         for (player player : players) {
-            if (winningValue == player.getDeckValue()) {
+            if (winningValue == player.deckValue) {
                 System.out.println(player.getPlayerName() + " has won");
             }
         }
-        if (user.getDeckValue() == winningValue){
+        if (user.deckValue == winningValue){
             return totalBet;
         }else {
             return money - bet;
@@ -185,21 +186,21 @@ public class Game {
     }
 
     public void pairSeeker(card i1, player player){
-        if (player.getFirstCard().getNumber() == player.getSecondCard().getNumber()){
-            if (i1.getNumber() == player.firstCard.getNumber()){
+        if (player.firstCard.number == player.secondCard.number){
+            if (i1.number == player.firstCard.number){
                 player.increaseSamePairCount();
             }
         }else{
-            if (i1.getNumber() == player.firstCard.getNumber()){
+            if (i1.number == player.firstCard.number){
                 player.increaseFirstPairCount();
-            }else if (i1.getNumber() == player.secondCard.getNumber()){
+            }else if (i1.number == player.secondCard.number){
                 player.increaseSecondPairCount();
             }
         }
     }
 
     public void straightSeeker(card i1, card i2, player player){
-        if (i1.getNumber() + 1 == i2.getNumber()){
+        if (i1.number + 1 == i2.number){
             player.increaseStraightCount();
         }
     }
@@ -218,11 +219,11 @@ public class Game {
                     }
                     valueSetter(bank, player);
 
-                    player.setSamePairCount(0);
-                    player.setFirstPairCount(0);
-                    player.setSecondPairCount(0);
-                    player.setStraightCount(0);
-                    player.setFlush(false);
+                    player.samePairCount = 0;
+                    player.firstPairCount = 0;
+                    player.secondPairCount = 0;
+                    player.straightCount = 0;
+                    player.isFlush = false;
                 }
             }
         }
@@ -236,33 +237,33 @@ public class Game {
 
     public void deckArranger(card[] bank, player player, int cards, int card2Number, int card1Number){
         //Copying the bank's hand
-        bank[0] = bankHand.getFirstCard();
-        bank[1] = bankHand.getSecondCard();
-        bank[2] = bankHand.getThirdCard();
-        bank[3] = bankHand.getFourthCard();
-        bank[4] = bankHand.getFifthCard();
+        bank[0] = bankHand.firstCard;
+        bank[1] = bankHand.secondCard;
+        bank[2] = bankHand.thirdCard;
+        bank[3] = bankHand.fourthCard;
+        bank[4] = bankHand.fifthCard;
         switch (cards){
             case 0://Replacing card 1 with first card
-                bank[card1Number] = player.getFirstCard();
+                bank[card1Number] = player.firstCard;
                 break;
             case  1://Replacing card 2 with first card
-                bank[card2Number] = player.getFirstCard();
+                bank[card2Number] = player.firstCard;
                 break;
             case 2://Replacing card 1 with second card
-                bank[card1Number] = player.getSecondCard();
+                bank[card1Number] = player.secondCard;
                 break;
             case 3://Replacing card 2 with second card
-                bank[card2Number] = player.getSecondCard();
+                bank[card2Number] = player.secondCard;
                 break;
             case 4://Replacing both cards with user's cards
-                bank[card1Number] = player.getFirstCard();
-                bank[card2Number] = player.getSecondCard();
+                bank[card1Number] = player.firstCard;
+                bank[card2Number] = player.secondCard;
                 break;
         }
         //Placing cards in number order
         for (int j= 0; j<bank.length-1; j++){
             for (int j2 = j+1; j2<bank.length; j2++){
-                if (bank[j2].getNumber() < bank[j].getNumber()){
+                if (bank[j2].number < bank[j].number){
                     card j3 = bank[j];
                     bank[j] = bank[j2];
                     bank[j2] = j3;
@@ -272,7 +273,7 @@ public class Game {
     }
 
     public void valueSetter(card[] bank, player player){
-        switch (player.getSamePairCount()){
+        switch (player.samePairCount){
             case 2:
                 setValue(1, player);//One Pair
                 break;
@@ -282,9 +283,9 @@ public class Game {
             case 4:
                 setValue(7, player);//Four of a Kind
         }
-        switch (player.getFirstPairCount()){
+        switch (player.firstPairCount){
             case 2:
-                switch (player.getSecondPairCount()){
+                switch (player.secondPairCount){
                     case 2:
                         setValue(2, player);//Two Pairs
                         break;
@@ -297,7 +298,7 @@ public class Game {
                 }
                 break;
             case 3:
-                switch (player.getSecondPairCount()){
+                switch (player.secondPairCount){
                     case 2:
                         setValue(6, player);//Full House
                         break;
@@ -310,7 +311,7 @@ public class Game {
                 setValue(7, player);//Four of a Kind
                 break;
             default:
-                switch (player.getSecondPairCount()){
+                switch (player.secondPairCount){
                     case 2:
                         setValue(1, player);//One Pair
                         break;
@@ -323,18 +324,18 @@ public class Game {
                 }
                 break;
         }
-        if (bank[0].getSuit() == bank[1].getSuit()){
-            if (bank[1].getSuit() == bank[2].getSuit()){
-                if (bank[2].getSuit() == bank[3].getSuit()){
-                    if (bank[3].getSuit() == bank[4].getSuit() && bank[4].getSuit() != card.suits.Zero){
-                        player.setFlush(true);
+        if (bank[0].suit == bank[1].suit){
+            if (bank[1].suit == bank[2].suit){
+                if (bank[2].suit == bank[3].suit){
+                    if (bank[3].suit == bank[4].suit && bank[4].suit != card.suits.Zero){
+                        player.isFlush = true;
                     }
                 }
             }
         }
-        if (player.getStraightCount() == 4){
-            if (player.isFlush()){
-                if (bank[4].getNumber() == 14){
+        if (player.straightCount == 4){
+            if (player.isFlush){
+                if (bank[4].number == 14){
                     setValue(9, player);//Royal Flush
                 }else {
                     setValue(8, player);//Straight Flush
@@ -347,15 +348,15 @@ public class Game {
     }
 
     public void setValue(int value, player player){
-        if (player.getDeckValue()<value){
-            player.setDeckValue(value);
+        if (player.deckValue < value){
+            player.deckValue = value;
         }
         thisDeckValue = value;
     }
 
     public card giveCard(){
         int cardNumber = rand.nextInt(0, 52);
-        while(deck[cardNumber].getSuit() == card.suits.Zero){
+        while(deck[cardNumber].suit == card.suits.Zero){
             cardNumber = rand.nextInt(0, 52);
         }
 
@@ -367,7 +368,7 @@ public class Game {
     public void betSetter(){
         setHighestBet();
         for (int i = 0; i < players.size()-1; i++) {
-            if (players.get(i).playing && players.get(i).getDeckValue() != highestBet) {
+            if (players.get(i).playing && players.get(i).deckValue != highestBet) {
                 players.get(i).playTurn(highestBet);
             }
         }
@@ -377,8 +378,8 @@ public class Game {
 
     public void setHighestBet(){
         for (player player : players) {
-            if (highestBet < player.getBet()) {
-                highestBet = player.getBet();
+            if (highestBet < player.bet) {
+                highestBet = player.bet;
             }
         }
     }
@@ -387,19 +388,19 @@ public class Game {
         for (int i = 0; i<cardCount; i++){
             switch (i){
                 case 0:
-                    System.out.print(player.firstCard.getWriting());
+                    System.out.print(player.firstCard.writing);
                     break;
                 case 1:
-                    System.out.print(player.secondCard.getWriting());
+                    System.out.print(player.secondCard.writing);
                     break;
                 case 2:
-                    System.out.print(player.thirdCard.getWriting());
+                    System.out.print(player.thirdCard.writing);
                     break;
                 case 3:
-                    System.out.print(player.fourthCard.getWriting());
+                    System.out.print(player.fourthCard.writing);
                     break;
                 case 4:
-                    System.out.print(player.fifthCard.getWriting());
+                    System.out.print(player.fifthCard.writing);
                     break;
             }
             System.out.print(", ");
@@ -408,16 +409,16 @@ public class Game {
     }
 
     public void tieBreaker(player player){
-        if (winningValue == player.getDeckValue()){
-            player.setDeckValue(player.getFirstCard().getNumber() + player.getSecondCard().getNumber());
+        if (winningValue == player.deckValue){
+            player.deckValue = player.firstCard.number + player.secondCard.number;
         }else{
-            player.setDeckValue(0);
+            player.deckValue = 0;
         }
     }
 
     public void zeroingBets(){
         for (player player : players){
-            player.setBet(0);
+            player.bet = 0;
         }
     }
 }
